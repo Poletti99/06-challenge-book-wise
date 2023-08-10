@@ -1,10 +1,10 @@
 import type { AppProps } from 'next/app';
-import { Nunito } from 'next/font/google';
+import { Nunito_Sans } from 'next/font/google';
 import { globalStyles } from '../styles/global';
 
 globalStyles();
 
-const nunito = Nunito({
+const nunito = Nunito_Sans({
   weight: ['400', '700'],
   subsets: ['latin'],
 });

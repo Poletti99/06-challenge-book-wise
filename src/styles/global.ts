@@ -9,5 +9,6 @@ export const globalStyles = globalCss({
   body: {
     backgroundColor: '$gray800',
     color: '$gray100',
+    minHeight: '100vh',
   },
 });
