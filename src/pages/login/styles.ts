@@ -1,6 +1,6 @@
 import { styled } from '@/src/styles';
 
-export const HomeContainer = styled('div', {
+export const LoginContainer = styled('div', {
   display: 'flex',
   alignItems: 'center',
   padding: '$4',
@@ -8,13 +8,13 @@ export const HomeContainer = styled('div', {
   gap: '$10',
 });
 
-export const LoginContainer = styled('div', {
+export const LoginOptionsContainer = styled('div', {
   padding: '8rem',
   height: '100%',
   width: '100%',
 });
 
-export const LoginContent = styled('div', {
+export const LoginOptionsContent = styled('div', {
   maxWidth: 372,
   width: 372,
   display: 'flex',

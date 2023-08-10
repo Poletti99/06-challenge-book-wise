@@ -1,26 +1,24 @@
+import Hero from '@/src/assets/hero.png';
+import LogoGithub from '@/src/assets/logo-github.svg';
+import LogoGoogle from '@/src/assets/logo-google.svg';
+import LogoGuest from '@/src/assets/logo-guest.svg';
+import Logo from '@/src/assets/logo.svg';
 import Image from 'next/image';
-import { Tag } from '../../components/Tag';
-import { TextInput } from '../../components/TextInput';
 import {
   HeroBackdrop,
   HeroContainer,
   HeroText,
-  HomeContainer,
   LoginButton,
   LoginContainer,
-  LoginContent,
   LoginHeader,
   LoginOptions,
+  LoginOptionsContainer,
+  LoginOptionsContent
 } from './styles';
-import Logo from '@/src/assets/logo.svg';
-import Hero from '@/src/assets/hero.png';
-import LogoGoogle from '@/src/assets/logo-google.svg';
-import LogoGithub from '@/src/assets/logo-github.svg';
-import LogoGuest from '@/src/assets/logo-guest.svg';
 
 export default function Home() {
   return (
-    <HomeContainer>
+    <LoginContainer>
       <HeroContainer>
         <HeroBackdrop />
         <HeroText>
@@ -29,8 +27,8 @@ export default function Home() {
         </HeroText>
         <Image src={Hero} alt="" width={598} />
       </HeroContainer>
-      <LoginContainer>
-        <LoginContent>
+      <LoginOptionsContainer>
+        <LoginOptionsContent>
           <LoginHeader>
             <h2>Boas Vindas!</h2>
             <p>Faça seu login ou acesse como visitante</p>
@@ -50,8 +48,8 @@ export default function Home() {
               Acessar como visitante
             </LoginButton>
           </LoginOptions>
-        </LoginContent>
-      </LoginContainer>
-    </HomeContainer>
+        </LoginOptionsContent>
+      </LoginOptionsContainer>
+    </LoginContainer>
   );
 }
