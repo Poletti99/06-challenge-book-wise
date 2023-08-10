@@ -1,19 +1,19 @@
 import Hero from '@/src/assets/hero.png';
+import Logo from '@/src/assets/logo-big.svg';
 import LogoGithub from '@/src/assets/logo-github.svg';
 import LogoGoogle from '@/src/assets/logo-google.svg';
 import LogoGuest from '@/src/assets/logo-guest.svg';
-import Logo from '@/src/assets/logo.svg';
 import Image from 'next/image';
 import {
   HeroBackdrop,
   HeroContainer,
-  HeroText,
   LoginButton,
   LoginContainer,
   LoginHeader,
   LoginOptions,
   LoginOptionsContainer,
-  LoginOptionsContent
+  LoginOptionsContent,
+  LogoContainer,
 } from './styles';
 
 export default function Home() {
@@ -21,10 +21,9 @@ export default function Home() {
     <LoginContainer>
       <HeroContainer>
         <HeroBackdrop />
-        <HeroText>
-          <Image src={Logo} alt="" width={48} />
-          BookWise
-        </HeroText>
+        <LogoContainer>
+          <Image src={Logo} alt="" quality={100} />
+        </LogoContainer>
         <Image src={Hero} alt="" width={598} />
       </HeroContainer>
       <LoginOptionsContainer>

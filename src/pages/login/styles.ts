@@ -1,4 +1,5 @@
 import { styled } from '@/src/styles';
+import { Divide } from 'phosphor-react';
 
 export const LoginContainer = styled('div', {
   display: 'flex',
@@ -91,20 +92,8 @@ export const HeroBackdrop = styled('div', {
   lineHeight: 0,
 });
 
-export const HeroText = styled('div', {
+export const LogoContainer = styled('div', {
   position: 'absolute',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$1',
-
-  fontSize: '$4xl',
-  fontWeight: '$bold',
-  lineHeight: '$base',
-
-  background: '$gradient-horizontal',
-  backgroundClip: 'text',
-  '-webkit-background-clip': 'text',
-  '-webkit-text-fill-color': 'transparent',
 
   left: '50%',
   top: '50%',
