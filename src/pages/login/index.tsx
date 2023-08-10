@@ -15,8 +15,15 @@ import {
   LoginOptionsContent,
   LogoContainer,
 } from './styles';
+import { useRouter } from 'next/router';
 
 export default function Home() {
+  const router = useRouter();
+
+  async function handleGuestLogin() {
+    await router.push('/home');
+  }
+
   return (
     <LoginContainer>
       <HeroContainer>
@@ -42,7 +49,7 @@ export default function Home() {
               <Image src={LogoGithub} alt="" />
               Entrar com Github
             </LoginButton>
-            <LoginButton>
+            <LoginButton onClick={handleGuestLogin}>
               <Image src={LogoGuest} alt="" />
               Acessar como visitante
             </LoginButton>
