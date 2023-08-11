@@ -84,6 +84,15 @@ export const MenuLoginButton = styled(BaseItem, {
   },
 });
 
-export const FeedContainer = styled('main', {});
+export const FeedContainer = styled('main', {
+  flex: 1,
+  margin: '0 4rem 0 6rem',
+});
+
+export const BookReviewList = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$3',
+});
 
 export const PopularBooksContainer = styled('aside', {});

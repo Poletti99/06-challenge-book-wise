@@ -1,4 +1,5 @@
 import {
+  BookReviewList,
   FeedContainer,
   HomeContainer,
   MenuContainer,
@@ -10,6 +11,7 @@ import {
 import Logo from '@/src/assets/logo-small.svg';
 import Image from 'next/image';
 import { Binoculars, ChartLineUp, SignIn } from 'phosphor-react';
+import { BookReview } from './components/BookReview';
 
 type ActiveTab = 'home' | 'explore';
 export default function Home() {
@@ -38,6 +40,11 @@ export default function Home() {
 
       <FeedContainer>
         <h2>Início</h2>
+        <BookReviewList>
+          <BookReview />
+          <BookReview />
+          <BookReview />
+        </BookReviewList>
       </FeedContainer>
 
       <PopularBooksContainer>
