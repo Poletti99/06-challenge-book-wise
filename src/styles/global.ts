@@ -10,5 +10,7 @@ export const globalStyles = globalCss({
     backgroundColor: '$gray800',
     color: '$gray100',
     minHeight: '100vh',
+    maxHeight: '100vh',
+    overflow: 'hidden',
   },
 });

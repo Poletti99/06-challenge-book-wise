@@ -3,6 +3,9 @@ import Image from 'next/image';
 import { Star } from 'phosphor-react';
 import {
   BookReviewContainer,
+  BookReviewContent,
+  BookReviewDetails,
+  BookReviewRating,
   ReviewHeader,
   UserImageContainer,
   UserInfo,
@@ -22,18 +25,34 @@ export function BookReview() {
           </div>
         </UserInfo>
 
-        <div>
+        <BookReviewRating>
+          <Star weight="fill" />
+          <Star weight="fill" />
           <Star weight="fill" />
           <Star weight="fill" />
           <Star />
-          <Star />
-          <Star />
-        </div>
+        </BookReviewRating>
       </ReviewHeader>
 
-      <div>
-        <h2>aoba</h2>
-      </div>
+      <BookReviewContent>
+        <Image src={Hero} height={152} width={108} alt="" />
+        <BookReviewDetails>
+          <div>
+            <h2>O símbolo perdido</h2>
+            <span>Dan Brown</span>
+          </div>
+
+          <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nisi totam
+            repellat quaerat corporis corrupti deserunt id similique omnis, modi
+            ipsum sequi quas asperiores ut quasi repellendus molestias debitis
+            eius. Maxime! Lorem ipsum, dolor sit amet consectetur adipisicing
+            elit. Nisi totam repellat quaerat corporis corrupti deserunt id
+            similique omnis, modi ipsum sequi quas asperiores ut quasi
+            repellendus molestias debitis eius. Maxime!
+          </p>
+        </BookReviewDetails>
+      </BookReviewContent>
     </BookReviewContainer>
   );
 }
