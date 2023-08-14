@@ -105,3 +105,9 @@ export const BookReviewList = styled('div', {
 });
 
 export const PopularBooksContainer = styled('aside', {});
+
+export const PopularBookList = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$3',
+});
