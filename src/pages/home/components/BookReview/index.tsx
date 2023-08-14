@@ -1,15 +1,16 @@
 import Hero from '@/src/assets/hero.png';
 import Image from 'next/image';
-import { Star } from 'phosphor-react';
+import { StarsRating } from '../StarsRating';
 import {
   BookReviewContainer,
   BookReviewContent,
   BookReviewDetails,
-  BookReviewRating,
   ReviewHeader,
   UserImageContainer,
   UserInfo,
 } from './styles';
+import { Heading } from '@/src/components/Heading';
+import { Text } from '@/src/components/Text';
 
 export function BookReview() {
   return (
@@ -21,28 +22,22 @@ export function BookReview() {
           </UserImageContainer>
           <div>
             <p>Victor Poletti</p>
-            <span>Hoje</span>
+            <Text as="span">Hoje</Text>
           </div>
         </UserInfo>
 
-        <BookReviewRating>
-          <Star weight="fill" />
-          <Star weight="fill" />
-          <Star weight="fill" />
-          <Star weight="fill" />
-          <Star />
-        </BookReviewRating>
+        <StarsRating />
       </ReviewHeader>
 
       <BookReviewContent>
         <Image src={Hero} height={152} width={108} alt="" />
         <BookReviewDetails>
           <div>
-            <h2>O símbolo perdido</h2>
-            <span>Dan Brown</span>
+            <Heading>O símbolo perdido</Heading>
+            <Text as="span">Dan Brown</Text>
           </div>
 
-          <p>
+          <Text>
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nisi totam
             repellat quaerat corporis corrupti deserunt id similique omnis, modi
             ipsum sequi quas asperiores ut quasi repellendus molestias debitis
@@ -50,7 +45,7 @@ export function BookReview() {
             elit. Nisi totam repellat quaerat corporis corrupti deserunt id
             similique omnis, modi ipsum sequi quas asperiores ut quasi
             repellendus molestias debitis eius. Maxime!
-          </p>
+          </Text>
         </BookReviewDetails>
       </BookReviewContent>
     </BookReviewContainer>

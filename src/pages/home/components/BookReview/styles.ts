@@ -1,3 +1,4 @@
+import { Text } from '@/src/components/Text';
 import { styled } from '@/src/styles';
 
 export const BookReviewContainer = styled('div', {
@@ -13,19 +14,6 @@ export const BookReviewContainer = styled('div', {
 export const ReviewHeader = styled('header', {
   display: 'flex',
   justifyContent: 'space-between',
-
-  '& > div:first-of-type': {},
-});
-
-export const BookReviewRating = styled('div', {
-  display: 'flex',
-  gap: '$1',
-
-  '& > svg': {
-    width: '$4',
-    height: '$4',
-    color: '$purple100',
-  },
 });
 
 export const UserInfo = styled('div', {
@@ -36,9 +24,8 @@ export const UserInfo = styled('div', {
   '& > div > p': {
     lineHeight: '$base',
   },
-  '& > div > span': {
-    lineHeight: '$base',
-    fontSize: '$sm',
+
+  [`& > div > ${Text}`]: {
     color: '$gray400',
   },
 });
@@ -77,24 +64,9 @@ export const BookReviewDetails = styled('div', {
   justifyContent: 'space-between',
   gap: '$5',
   height: 152,
-  // overflow: 'hidden',
 
-  '& > div': {
-    h2: {
-      fontSize: '$md',
-      lineHeight: '$short',
-    },
-    span: {
-      color: '$gray400',
-      fontSize: '$sm',
-      lineHeight: '$base',
-    },
-  },
-
-  '& > p': {
+  [`> ${Text}`]: {
     color: '$gray300',
-    fontSize: '$sm',
-    lineHeight: '$base',
 
     overflow: 'hidden',
     display: '-webkit-box',
