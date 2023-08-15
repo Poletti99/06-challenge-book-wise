@@ -1,46 +1,20 @@
-import Hero from '@/src/assets/hero.png';
 import {
   BookReviewList,
   FeedContainer,
   HomeContainer,
-  MenuContainer,
-  MenuItem,
-  MenuLoginButton,
-  PopularBooksContainer,
   PopularBookList,
+  PopularBooksContainer,
 } from './styles';
 
-import Logo from '@/src/assets/logo-small.svg';
-import Image from 'next/image';
-import { Binoculars, ChartLineUp, SignIn } from 'phosphor-react';
+import { SidebarMenu } from '@/src/components/SidebarMenu';
 import { BookReview } from './components/BookReview';
-import { Text } from '@/src/components/Text';
 import { PopularBook } from './components/PopularBook';
 
 type ActiveTab = 'home' | 'explore';
 export default function Home() {
   return (
     <HomeContainer>
-      <MenuContainer>
-        <div>
-          <Image src={Logo} alt="" />
-          <nav>
-            <MenuItem href="/home" active>
-              <ChartLineUp /> Início
-            </MenuItem>
-
-            <MenuItem href="/home" active={false}>
-              <Binoculars /> Explorar
-            </MenuItem>
-          </nav>
-        </div>
-
-        <footer>
-          <MenuLoginButton href="/">
-            Fazer Login <SignIn />
-          </MenuLoginButton>
-        </footer>
-      </MenuContainer>
+      <SidebarMenu />
 
       <FeedContainer>
         <h2>Início</h2>
