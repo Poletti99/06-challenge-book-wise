@@ -16,8 +16,10 @@ import {
   LogoContainer,
 } from './styles';
 import { useRouter } from 'next/router';
+import { NextPageWithLayout } from '../_app.page';
+import { ReactElement } from 'react';
 
-export default function Home() {
+const Login: NextPageWithLayout = function () {
   const router = useRouter();
 
   async function handleGuestLogin() {
@@ -58,4 +60,10 @@ export default function Home() {
       </LoginOptionsContainer>
     </LoginContainer>
   );
-}
+};
+
+Login.getLayout = function getLayout(page: ReactElement) {
+  return page;
+};
+
+export default Login;

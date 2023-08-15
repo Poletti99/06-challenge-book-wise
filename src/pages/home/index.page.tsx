@@ -1,21 +1,17 @@
 import {
   BookReviewList,
   FeedContainer,
-  HomeContainer,
   PopularBookList,
   PopularBooksContainer,
 } from './styles';
 
-import { SidebarMenu } from '@/src/components/SidebarMenu';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
 
 type ActiveTab = 'home' | 'explore';
 export default function Home() {
   return (
-    <HomeContainer>
-      <SidebarMenu />
-
+    <>
       <FeedContainer>
         <h2>Início</h2>
         <BookReviewList>
@@ -35,6 +31,6 @@ export default function Home() {
           <PopularBook />
         </PopularBookList>
       </PopularBooksContainer>
-    </HomeContainer>
+    </>
   );
 }

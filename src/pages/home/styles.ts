@@ -1,11 +1,5 @@
 import { styled } from '@/src/styles';
 
-export const HomeContainer = styled('div', {
-  display: 'flex',
-  height: '100vh',
-  padding: '$5',
-});
-
 export const FeedContainer = styled('main', {
   flex: 1,
   maxWidth: 1080,
