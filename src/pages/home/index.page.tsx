@@ -5,13 +5,14 @@ import {
   PopularBooksContainer,
 } from './styles';
 
+import { PageContainer } from '@/src/components/PageContainer';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
 
 type ActiveTab = 'home' | 'explore';
 export default function Home() {
   return (
-    <>
+    <PageContainer>
       <FeedContainer>
         <h2>Início</h2>
         <BookReviewList>
@@ -31,6 +32,6 @@ export default function Home() {
           <PopularBook />
         </PopularBookList>
       </PopularBooksContainer>
-    </>
+    </PageContainer>
   );
 }
