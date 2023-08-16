@@ -1,4 +1,3 @@
-import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
 import { styled } from '@/src/styles';
 
