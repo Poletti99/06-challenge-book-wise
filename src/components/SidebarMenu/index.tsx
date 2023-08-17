@@ -13,7 +13,7 @@ export function SidebarMenu() {
             <ChartLineUp /> Início
           </MenuItem>
 
-          <MenuItem href="/home" active={false}>
+          <MenuItem href="/explore" active={false}>
             <Binoculars /> Explorar
           </MenuItem>
 
