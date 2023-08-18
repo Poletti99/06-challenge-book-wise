@@ -1,10 +1,20 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { About, AboutItem, CloseButton, Content, Overlay } from './styles';
+import {
+  About,
+  AboutItem,
+  BookInfos,
+  CloseButton,
+  CommentList,
+  Content,
+  Overlay,
+  RatingSection,
+} from './styles';
 import { BookOpen, BookmarkSimple, X } from 'phosphor-react';
 import { Box } from '@/src/components/Box';
 import { BookDetails } from '@/src/components/BookDetails';
 import { Text } from '@/src/components/Text';
 import { Heading } from '@/src/components/Heading';
+import { Comment } from '../Comment';
 
 export function BookRatingModal() {
   return (
@@ -16,7 +26,7 @@ export function BookRatingModal() {
           <X size={24} />
         </CloseButton>
 
-        <Box>
+        <BookInfos>
           <BookDetails size="xl" />
 
           <About>
@@ -35,7 +45,21 @@ export function BookRatingModal() {
               </div>
             </AboutItem>
           </About>
-        </Box>
+        </BookInfos>
+
+        <RatingSection>
+          <div>
+            <Text>Avaliações</Text> <button>Avaliar</button>
+          </div>
+          <CommentList>
+            <Comment />
+            <Comment />
+            <Comment />
+            <Comment />
+            <Comment />
+            <Comment />
+          </CommentList>
+        </RatingSection>
       </Content>
     </Dialog.Portal>
   );

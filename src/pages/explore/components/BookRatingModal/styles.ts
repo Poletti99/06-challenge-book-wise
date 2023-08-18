@@ -1,3 +1,4 @@
+import { Box } from '@/src/components/Box';
 import { styled } from '@/src/styles';
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -15,8 +16,18 @@ export const Content = styled(Dialog.Content, {
   bottom: 0,
   right: 0,
   minWidth: '40rem',
+  maxWidth: '40rem',
   background: '$gray800',
   padding: '4rem 3rem 0',
+
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$10',
+  overflowY: 'scroll',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
 });
 
 export const CloseButton = styled(Dialog.Close, {
@@ -31,6 +42,8 @@ export const CloseButton = styled(Dialog.Close, {
     color: '$gray400',
   },
 });
+
+export const BookInfos = styled(Box, {});
 
 export const About = styled('div', {
   display: 'flex',
@@ -50,4 +63,28 @@ export const AboutItem = styled('div', {
     height: 24,
     color: '$green100',
   },
+});
+
+export const RatingSection = styled('div', {
+  '> div:first-of-type': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: '$4',
+
+    button: {
+      all: 'unset',
+      color: '$purple100',
+      fontSize: '$md',
+      fontWeight: '$bold',
+      padding: '$1 $2',
+      cursor: 'pointer ',
+    },
+  },
+});
+
+export const CommentList = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$4',
 });
