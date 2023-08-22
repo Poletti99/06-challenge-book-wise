@@ -1,9 +1,9 @@
 import { StarsRating } from '@/src/pages/home/components/StarsRating';
+import { ComponentProps } from 'react';
 import { Heading } from '../Heading';
 import { Text } from '../Text';
 import { BookDetailsContainer, BookDetailsContent, BookImage } from './styles';
-import Hero from '@/src/assets/hero.png';
-import { ComponentProps } from 'react';
+import { BookT } from '@/src/pages/explore/types';
 
 const MAP_HEADING_SIZE = {
   sm: 'md',
@@ -12,23 +12,42 @@ const MAP_HEADING_SIZE = {
   xl: 'lg',
 } as const;
 
-interface BookDetailsProps
-  extends ComponentProps<typeof BookDetailsContainer> {}
+interface BookDetailsProps extends ComponentProps<typeof BookDetailsContainer> {
+  name: string;
+  author: string;
+  coverURL: string;
+  ratings: {
+    id: string;
+    rate: number;
+  }[];
+}
 
-export function BookDetails({ size = 'md' }: BookDetailsProps) {
+export function BookDetails({
+  size = 'md',
+  name,
+  author,
+  coverURL,
+  ratings,
+}: BookDetailsProps) {
   return (
     <BookDetailsContainer size={size}>
-      <BookImage src={Hero} alt="" height={94} width={64} size={size} />
+      <BookImage
+        src={coverURL.replace('public', '')}
+        alt=""
+        height={94}
+        width={64}
+        size={size}
+      />
       <BookDetailsContent>
         <div>
           <Heading
             size={MAP_HEADING_SIZE[size as keyof typeof MAP_HEADING_SIZE]}
           >
-            A revolução dos bichos
+            {name}
           </Heading>
-          <Text>George Orwell</Text>
+          <Text>{author}</Text>
         </div>
-        <StarsRating />
+        <StarsRating ratings={ratings} />
       </BookDetailsContent>
     </BookDetailsContainer>
   );

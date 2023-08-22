@@ -8,8 +8,10 @@ import {
 import { PageContainer } from '@/src/components/PageContainer';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
+import { useState } from 'react';
 
-type ActiveTab = 'home' | 'explore';
+type ActiveTab = 'home' | 'explore' | 'profile';
+
 export default function Home() {
   return (
     <PageContainer>

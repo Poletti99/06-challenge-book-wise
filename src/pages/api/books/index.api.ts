@@ -24,12 +24,28 @@ export default async function handler(
       orderBy: {
         id: 'desc',
       },
+      include: {
+        ratings: {
+          select: {
+            id: true,
+            rate: true,
+          },
+        },
+      },
     });
   } else {
     bookList = await prisma.book.findMany({
       take: PAGE_SIZE,
       orderBy: {
         id: 'desc',
+      },
+      include: {
+        ratings: {
+          select: {
+            id: true,
+            rate: true,
+          },
+        },
       },
     });
   }
