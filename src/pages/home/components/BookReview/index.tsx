@@ -12,40 +12,62 @@ import {
 import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
 
-export function BookReview() {
+interface BookReviewProps {
+  user: {
+    name: string;
+    id: string;
+    avatar_url: string;
+  };
+  book: {
+    name: string;
+    author: string;
+    cover_url: string;
+    id: string;
+  };
+  rating: {
+    id: string;
+    rate: number;
+    description: string;
+    created_at: string;
+  };
+}
+
+export function BookReview({ user, book, rating }: BookReviewProps) {
   return (
     <BookReviewContainer>
       <ReviewHeader>
         <UserInfo>
           <UserImageContainer>
-            <Image src={Hero} alt="" width={40} height={40} />
+            <Image
+              src={user.avatar_url}
+              alt={user.name}
+              width={40}
+              height={40}
+            />
           </UserImageContainer>
           <div>
-            <p>Victor Poletti</p>
-            <Text as="span">Hoje</Text>
+            <p>{user.name}</p>
+            <Text as="span">{rating.created_at}</Text>
           </div>
         </UserInfo>
 
-        <StarsRating />
+        <StarsRating ratings={[{ id: rating.id, rate: rating.rate }]} />
       </ReviewHeader>
 
       <BookReviewContent>
-        <Image src={Hero} height={152} width={108} alt="" />
+        <Image
+          src={book.cover_url.replace('public', '')}
+          height={152}
+          width={108}
+          alt={book.name}
+        />
         <BookReviewDetails>
           <div>
-            <Heading>O símbolo perdido</Heading>
-            <Text as="span">Dan Brown</Text>
+            <Heading>{book.name}</Heading>
+            <Text as="span">{book.author}</Text>
           </div>
 
-          <Text>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nisi totam
-            repellat quaerat corporis corrupti deserunt id similique omnis, modi
-            ipsum sequi quas asperiores ut quasi repellendus molestias debitis
-            eius. Maxime! Lorem ipsum, dolor sit amet consectetur adipisicing
-            elit. Nisi totam repellat quaerat corporis corrupti deserunt id
-            similique omnis, modi ipsum sequi quas asperiores ut quasi
-            repellendus molestias debitis eius. Maxime!
-          </Text>
+          <Text>{rating.description}</Text>
         </BookReviewDetails>
       </BookReviewContent>
     </BookReviewContainer>
