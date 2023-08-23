@@ -11,8 +11,8 @@ export default async function handler(
     return res.status(405).end();
   }
 
+  const userId = String(req.query.userId || '');
   const paginationCursorId = String(req.query.cursorId || '');
-
   const prismaOptions: Prisma.RatingFindManyArgs = {
     take: PAGE_SIZE,
     skip: paginationCursorId ? 1 : 0,
@@ -20,7 +20,7 @@ export default async function handler(
       id: paginationCursorId,
     },
     where: {
-      user_id: undefined,
+      user_id: userId || undefined,
     },
     include: {
       book: {

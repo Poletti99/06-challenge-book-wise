@@ -6,33 +6,14 @@ import {
 } from './styles';
 
 import { PageContainer } from '@/src/components/PageContainer';
+import { api } from '@/src/lib/axios';
+import { prisma } from '@/src/lib/prisma';
+import { Book, Rating } from '@/src/types';
+import { GetStaticProps } from 'next';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
-import { useState } from 'react';
-import { GetServerSideProps, GetStaticProps } from 'next';
-import { prisma } from '@/src/lib/prisma';
-import { api } from '@/src/lib/axios';
 
 type ActiveTab = 'home' | 'explore' | 'profile';
-type Book = {
-  name: string;
-  author: string;
-  cover_url: string;
-  id: string;
-};
-
-type Rating = {
-  id: string;
-  rate: number;
-  description: string;
-  created_at: string;
-  book: Book;
-  user: {
-    name: string;
-    id: string;
-    avatar_url: string;
-  };
-};
 
 export interface PopularBooks extends Book {
   ratings: { id: string; rate: number }[];

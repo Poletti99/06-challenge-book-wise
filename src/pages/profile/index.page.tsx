@@ -20,16 +20,29 @@ import {
   Books,
   UserList,
 } from 'phosphor-react';
+import { GetServerSideProps, GetStaticProps } from 'next';
+import { Rating } from '@/src/types';
+import { api } from '@/src/lib/axios';
 
-export default function Profile() {
+interface ProfileProps {
+  ratings: Rating[];
+}
+
+export default function Profile({ ratings }: ProfileProps) {
   return (
     <PageContainer>
       <ReadedBookList>
-        <ReadedBook />
-        <ReadedBook />
-        <ReadedBook />
-        <ReadedBook />
-        <ReadedBook />
+        {ratings.map(({ book, ...rating }) => (
+          <ReadedBook
+            key={rating.id}
+            author={book.author}
+            cover_url={book.cover_url}
+            name={book.name}
+            createdAt={rating.created_at}
+            ratingDescription={rating.description}
+            ratings={[{ id: rating.id, rate: rating.rate }]}
+          />
+        ))}
       </ReadedBookList>
       <ProfileDetails>
         <UserInfos>
@@ -75,3 +88,17 @@ export default function Profile() {
     </PageContainer>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data } = await api.get<{ ratings: Rating[] }>('/ratings', {
+    params: {
+      userId: '4383f783-6ce1-4f92-b1dd-7a7a693c4aef',
+    },
+  });
+
+  return {
+    props: {
+      ratings: data.ratings,
+    },
+  };
+};

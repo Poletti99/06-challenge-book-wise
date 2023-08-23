@@ -6,6 +6,11 @@ export const ReadedBookList = styled('main', {
   gap: '$6',
   maxWidth: 1080,
   flex: 1,
+  overflowY: 'scroll',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
 });
 
 export const ProfileDetails = styled('aside', {
