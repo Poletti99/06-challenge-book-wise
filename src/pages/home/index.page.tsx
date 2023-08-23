@@ -13,27 +13,33 @@ import { GetStaticProps } from 'next';
 import { prisma } from '@/src/lib/prisma';
 
 type ActiveTab = 'home' | 'explore' | 'profile';
+type Book = {
+  name: string;
+  author: string;
+  cover_url: string;
+  id: string;
+};
+
+export interface PopularBooks extends Book {
+  ratings: { id: string; rate: number }[];
+}
 interface HomeProps {
   ratings: {
     id: string;
     rate: number;
     description: string;
     created_at: string;
-    book: {
-      name: string;
-      author: string;
-      cover_url: string;
-      id: string;
-    };
+    book: Book;
     user: {
       name: string;
       id: string;
       avatar_url: string;
     };
   }[];
+  popularBooks: PopularBooks[];
 }
 
-export default function Home({ ratings }: HomeProps) {
+export default function Home({ ratings, popularBooks }: HomeProps) {
   return (
     <PageContainer>
       <FeedContainer>
@@ -53,10 +59,15 @@ export default function Home({ ratings }: HomeProps) {
       <PopularBooksContainer>
         <h2>Livros populares</h2>
         <PopularBookList>
-          <PopularBook />
-          <PopularBook />
-          <PopularBook />
-          <PopularBook />
+          {popularBooks.map(({ ratings, ...book }) => (
+            <PopularBook
+              key={book.id}
+              name={book.name}
+              author={book.author}
+              cover_url={book.cover_url}
+              ratings={ratings}
+            />
+          ))}
         </PopularBookList>
       </PopularBooksContainer>
     </PageContainer>
@@ -96,9 +107,31 @@ export const getStaticProps: GetStaticProps = async ({}) => {
       })),
     );
 
+  const popularBooks = await prisma.book.findMany({
+    take: 4,
+    orderBy: {
+      ratings: {
+        _count: 'desc',
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      author: true,
+      cover_url: true,
+      ratings: {
+        select: {
+          rate: true,
+          id: true,
+        },
+      },
+    },
+  });
+
   return {
     props: {
       ratings,
+      popularBooks,
     },
     revalidate: 60 * 60 * 24, //1 dia
   };

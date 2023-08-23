@@ -4,18 +4,31 @@ import Hero from '@/src/assets/hero.png';
 import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
 import { StarsRating } from '../StarsRating';
+import { PopularBooks } from '../../index.page';
 
-export function PopularBook() {
+interface PopularBookProps extends Omit<PopularBooks, 'id'> {}
+
+export function PopularBook({
+  author,
+  cover_url,
+  name,
+  ratings,
+}: PopularBookProps) {
   return (
     <PopularBookContainer>
-      <Image src={Hero} alt="" width={64} height={94} />
+      <Image
+        src={cover_url.replace('public', '')}
+        alt=""
+        width={64}
+        height={94}
+      />
       <PopularBookInfos>
         <div>
-          <Heading>A revolução dos bichos</Heading>
-          <Text>George Orwell</Text>
+          <Heading>{name}</Heading>
+          <Text>{author}</Text>
         </div>
 
-        <StarsRating />
+        <StarsRating ratings={ratings} />
       </PopularBookInfos>
     </PopularBookContainer>
   );
