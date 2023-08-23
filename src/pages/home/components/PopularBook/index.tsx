@@ -1,10 +1,9 @@
-import Image from 'next/image';
-import { PopularBookContainer, PopularBookInfos } from './styles';
-import Hero from '@/src/assets/hero.png';
 import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
-import { StarsRating } from '../StarsRating';
+import Image from 'next/image';
 import { PopularBooks } from '../../index.page';
+import { StarsRating } from '../StarsRating';
+import { PopularBookContainer, PopularBookInfos } from './styles';
 
 interface PopularBookProps extends Omit<PopularBooks, 'id'> {}
 

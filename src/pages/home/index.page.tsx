@@ -9,8 +9,9 @@ import { PageContainer } from '@/src/components/PageContainer';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
 import { useState } from 'react';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import { prisma } from '@/src/lib/prisma';
+import { api } from '@/src/lib/axios';
 
 type ActiveTab = 'home' | 'explore' | 'profile';
 type Book = {
@@ -20,22 +21,24 @@ type Book = {
   id: string;
 };
 
+type Rating = {
+  id: string;
+  rate: number;
+  description: string;
+  created_at: string;
+  book: Book;
+  user: {
+    name: string;
+    id: string;
+    avatar_url: string;
+  };
+};
+
 export interface PopularBooks extends Book {
   ratings: { id: string; rate: number }[];
 }
 interface HomeProps {
-  ratings: {
-    id: string;
-    rate: number;
-    description: string;
-    created_at: string;
-    book: Book;
-    user: {
-      name: string;
-      id: string;
-      avatar_url: string;
-    };
-  }[];
+  ratings: Rating[];
   popularBooks: PopularBooks[];
 }
 
@@ -75,37 +78,7 @@ export default function Home({ ratings, popularBooks }: HomeProps) {
 }
 
 export const getStaticProps: GetStaticProps = async ({}) => {
-  const ratings = await prisma.rating
-    .findMany({
-      take: 5,
-      skip: 0,
-      include: {
-        book: {
-          select: {
-            name: true,
-            author: true,
-            cover_url: true,
-            id: true,
-          },
-        },
-        user: {
-          select: {
-            name: true,
-            avatar_url: true,
-            id: true,
-          },
-        },
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    })
-    .then((ratings) =>
-      ratings.map((rating) => ({
-        ...rating,
-        created_at: rating.created_at.toISOString(),
-      })),
-    );
+  const { data } = await api.get<{ ratings: Rating[] }>('/ratings');
 
   const popularBooks = await prisma.book.findMany({
     take: 4,
@@ -130,7 +103,7 @@ export const getStaticProps: GetStaticProps = async ({}) => {
 
   return {
     props: {
-      ratings,
+      ratings: data.ratings,
       popularBooks,
     },
     revalidate: 60 * 60 * 24, //1 dia

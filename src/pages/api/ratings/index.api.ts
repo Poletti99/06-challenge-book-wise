@@ -2,6 +2,7 @@ import { prisma } from '@/src/lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PAGE_SIZE } from '../constants';
 import { Prisma } from '@prisma/client';
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -12,23 +13,35 @@ export default async function handler(
 
   const paginationCursorId = String(req.query.cursorId || '');
 
-  const prismaOptions: Prisma.BookFindManyArgs = {
+  const prismaOptions: Prisma.RatingFindManyArgs = {
     take: PAGE_SIZE,
     skip: paginationCursorId ? 1 : 0,
     cursor: {
       id: paginationCursorId,
     },
-    orderBy: {
-      id: 'desc',
+    where: {
+      user_id: undefined,
     },
-
     include: {
-      ratings: {
+      book: {
         select: {
+          name: true,
+          author: true,
+          cover_url: true,
           id: true,
-          rate: true,
         },
       },
+
+      user: {
+        select: {
+          name: true,
+          avatar_url: true,
+          id: true,
+        },
+      },
+    },
+    orderBy: {
+      created_at: 'desc',
     },
   };
 
@@ -36,13 +49,20 @@ export default async function handler(
     Reflect.deleteProperty(prismaOptions, 'cursor');
   }
 
-  const bookList = await prisma.book.findMany({ ...prismaOptions });
+  const ratings = await prisma.rating
+    .findMany({ ...prismaOptions })
+    .then((ratings) =>
+      ratings.map((rating) => ({
+        ...rating,
+        created_at: rating.created_at.toISOString(),
+      })),
+    );
 
   let newPaginationCursorId = '';
-  if (bookList.length > 0) {
-    const lastBookInList = bookList.at(-1);
+  if (ratings.length > 0) {
+    const lastBookInList = ratings.at(-1);
     newPaginationCursorId = String(lastBookInList?.id);
   }
 
-  return res.json({ books: bookList, cursorId: newPaginationCursorId });
+  return res.json({ ratings, cursorId: newPaginationCursorId });
 }
