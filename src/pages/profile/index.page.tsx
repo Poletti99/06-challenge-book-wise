@@ -23,12 +23,26 @@ import {
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { Rating } from '@/src/types';
 import { api } from '@/src/lib/axios';
+import { prisma } from '@/src/lib/prisma';
+
+type UserAnalytics = {
+  totalReadedPages: number;
+  ratedBooks: number;
+  readedAuthors: number;
+  mostReadedCategory: string;
+};
 
 interface ProfileProps {
   ratings: Rating[];
+  user: { name: string; id: string; created_at: string };
+  userAnalytics: UserAnalytics;
 }
 
-export default function Profile({ ratings }: ProfileProps) {
+export default function Profile({
+  ratings,
+  user,
+  userAnalytics,
+}: ProfileProps) {
   return (
     <PageContainer>
       <ReadedBookList>
@@ -49,15 +63,18 @@ export default function Profile({ ratings }: ProfileProps) {
           <UserImageContainer>
             <Image src={Logo} width={72} height={72} alt="" />
           </UserImageContainer>
-          <Heading size="xl">Victor Poletti</Heading>
-          <Text as="span">membro desde 2023</Text>
+          <Heading size="xl">{user.name}</Heading>
+          <Text as="span">
+            membro desde
+            {user.created_at}
+          </Text>
         </UserInfos>
         <hr />
         <BooksAnalytics>
           <AnalyticsItem>
             <BookOpen />
             <div>
-              <Heading>380</Heading>
+              <Heading>{userAnalytics.totalReadedPages}</Heading>
               <Text>Páginas lidas</Text>
             </div>
           </AnalyticsItem>
@@ -65,21 +82,21 @@ export default function Profile({ ratings }: ProfileProps) {
           <AnalyticsItem>
             <Books />
             <div>
-              <Heading>10</Heading>
+              <Heading>{userAnalytics.ratedBooks}</Heading>
               <Text>Livros avaliados</Text>
             </div>
           </AnalyticsItem>
           <AnalyticsItem>
             <UserList />
             <div>
-              <Heading>8</Heading>
+              <Heading>{userAnalytics.readedAuthors}</Heading>
               <Text>Autores lidos</Text>
             </div>
           </AnalyticsItem>
           <AnalyticsItem>
             <BookmarkSimple />
             <div>
-              <Heading>Computação</Heading>
+              <Heading>{userAnalytics.mostReadedCategory}</Heading>
               <Text>Categoria mais lida</Text>
             </div>
           </AnalyticsItem>
@@ -89,16 +106,107 @@ export default function Profile({ ratings }: ProfileProps) {
   );
 }
 
+type RatingBook = {
+  name: string;
+  author: string;
+  cover_url: string;
+  id: string;
+  total_pages: number;
+  categories: {
+    category: { name: string };
+  }[];
+};
+interface RatingsData {
+  ratings: {
+    id: string;
+    rate: number;
+    description: string;
+    created_at: string;
+    book_id: string;
+    user_id: string;
+    book: RatingBook;
+
+    user: {
+      name: string;
+      avatar_url: string;
+      id: string;
+      created_at: string;
+    };
+  }[];
+}
+
+interface ReadedBook {
+  [id: string]: RatingBook;
+}
+
 export const getServerSideProps: GetServerSideProps = async () => {
-  const { data } = await api.get<{ ratings: Rating[] }>('/ratings', {
+  const userId = '4383f783-6ce1-4f92-b1dd-7a7a693c4aef';
+  const { data } = await api.get<RatingsData>('/ratings', {
     params: {
-      userId: '4383f783-6ce1-4f92-b1dd-7a7a693c4aef',
+      userId,
     },
   });
 
+  const { ratings } = data;
+
+  const user = await prisma.user
+    .findUnique({
+      where: {
+        id: userId,
+      },
+    })
+    .then((data) => ({ ...data, created_at: data?.created_at.toISOString() }));
+
+  const uniqueReadedBooks: ReadedBook = ratings.reduce((acc, curr) => {
+    return {
+      ...acc,
+      [curr.book_id]: curr.book,
+    };
+  }, {});
+
+  const userAnalytics = Object.values(uniqueReadedBooks).reduce<UserAnalytics>(
+    (acc, curr) => {
+      return {
+        totalReadedPages: acc.totalReadedPages + curr.total_pages,
+        ratedBooks: acc.ratedBooks + 1,
+        readedAuthors: acc.readedAuthors + 1,
+        mostReadedCategory: '',
+      };
+    },
+    {
+      totalReadedPages: 0,
+      ratedBooks: 0,
+      readedAuthors: 0,
+      mostReadedCategory: '',
+    },
+  );
+
+  const readedCategories = Object.values(uniqueReadedBooks).flatMap(
+    ({ categories }) => categories.map((category) => category.category.name),
+  );
+
+  const categoriesCount = readedCategories.reduce((acc, curr) => {
+    return {
+      ...acc,
+      [curr]: Number(acc[curr as keyof typeof acc] + 1 || 1),
+    };
+  }, {});
+
+  const categoriesValues: number[] = Object.values(categoriesCount);
+
+  const mostReadedCategoryValue = Math.max(...categoriesValues);
+
+  const mostReadedCategoryName = Object.entries(categoriesCount).find(
+    (category) => category[1] === mostReadedCategoryValue,
+  )?.[0];
+
+  userAnalytics.mostReadedCategory = mostReadedCategoryName || '';
+
   return {
     props: {
-      ratings: data.ratings,
+      ratings: ratings,
+      user,
+      userAnalytics,
     },
   };
 };

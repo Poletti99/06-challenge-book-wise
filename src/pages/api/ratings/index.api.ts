@@ -29,6 +29,17 @@ export default async function handler(
           author: true,
           cover_url: true,
           id: true,
+          total_pages: true,
+
+          categories: {
+            select: {
+              category: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
         },
       },
 
@@ -37,6 +48,7 @@ export default async function handler(
           name: true,
           avatar_url: true,
           id: true,
+          created_at: true,
         },
       },
     },
