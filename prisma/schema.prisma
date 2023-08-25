@@ -10,6 +10,7 @@ datasource db {
 model User {
   id         String   @id @default(uuid())
   name       String
+  email      String   @unique
   avatar_url String?
   created_at DateTime @default(now())
 
@@ -82,18 +83,22 @@ model Account {
   scope               String?
   id_token            String?
   session_state       String?
-  user                User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([provider, provider_account_id])
+  @@index([user_id])
   @@map("accounts")
 }
 
 model Session {
   id            String   @id @default(cuid())
-  session_token String
+  session_token String   @unique
   user_id       String
   expires       DateTime
-  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
   @@map("sessions")
 }

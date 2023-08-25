@@ -1,9 +1,10 @@
+import { NextPage } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { Nunito_Sans } from 'next/font/google';
-import { globalStyles } from '../styles/global';
 import { ReactElement, ReactNode } from 'react';
-import { NextPage } from 'next';
 import { DefaultLayout } from '../layouts/DefaultLayout';
+import { globalStyles } from '../styles/global';
 
 globalStyles();
 
@@ -24,11 +25,16 @@ function defaultLayout(page: ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;
 }
 
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? defaultLayout;
   return (
-    <div className={nunito.className}>
-      {getLayout(<Component {...pageProps} />)}
-    </div>
+    <SessionProvider session={session}>
+      <div className={nunito.className}>
+        {getLayout(<Component {...pageProps} />)}
+      </div>
+    </SessionProvider>
   );
 }

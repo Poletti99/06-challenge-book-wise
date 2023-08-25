@@ -17,11 +17,24 @@ import {
 } from './styles';
 import { useRouter } from 'next/router';
 import { NextPageWithLayout } from '../_app.page';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
+import { useSession, signIn } from 'next-auth/react';
 
 const Login: NextPageWithLayout = function () {
   const router = useRouter();
+  const session = useSession();
 
+  useEffect(() => {
+    console.log(session);
+    const isSignedIn = session.status === 'authenticated';
+    if (isSignedIn) {
+      router.push('/home');
+    }
+  }, [session]);
+
+  async function handleLoginWithGoogle() {
+    await signIn('google');
+  }
   async function handleGuestLogin() {
     await router.push('/home');
   }
@@ -43,16 +56,16 @@ const Login: NextPageWithLayout = function () {
           </LoginHeader>
 
           <LoginOptions>
-            <LoginButton>
-              <Image src={LogoGoogle} alt="" />
+            <LoginButton onClick={handleLoginWithGoogle}>
+              <Image src={LogoGoogle} alt="" width={32} height={32} />
               Entrar com Google
             </LoginButton>
             <LoginButton>
-              <Image src={LogoGithub} alt="" />
+              <Image src={LogoGithub} alt="" width={32} height={32} />
               Entrar com Github
             </LoginButton>
             <LoginButton onClick={handleGuestLogin}>
-              <Image src={LogoGuest} alt="" />
+              <Image src={LogoGuest} alt="" width={32} height={32} />
               Acessar como visitante
             </LoginButton>
           </LoginOptions>
