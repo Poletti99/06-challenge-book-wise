@@ -20,10 +20,17 @@ import {
   Books,
   UserList,
 } from 'phosphor-react';
-import { GetServerSideProps, GetStaticProps } from 'next';
+import {
+  GetServerSideProps,
+  GetStaticProps,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
 import { Rating } from '@/src/types';
 import { api } from '@/src/lib/axios';
 import { prisma } from '@/src/lib/prisma';
+import { buildNextAuthOptions } from '../api/auth/[...nextauth].api';
+import { getServerSession } from 'next-auth/next';
 
 type UserAnalytics = {
   totalReadedPages: number;
@@ -139,8 +146,19 @@ interface ReadedBook {
   [id: string]: RatingBook;
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const userId = '4383f783-6ce1-4f92-b1dd-7a7a693c4aef';
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, buildNextAuthOptions());
+
+  const userId = session?.user.id;
+  if (!userId) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+        statusCode: 401,
+      },
+    };
+  }
   const { data } = await api.get<RatingsData>('/ratings', {
     params: {
       userId,

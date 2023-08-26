@@ -25,16 +25,17 @@ const Login: NextPageWithLayout = function () {
   const session = useSession();
 
   useEffect(() => {
-    console.log(session);
     const isSignedIn = session.status === 'authenticated';
     if (isSignedIn) {
+      console.log('desgrama');
       router.push('/home');
     }
   }, [session]);
 
   async function handleLoginWithGoogle() {
-    await signIn('google');
+    await signIn('google', { callbackUrl: '/home' });
   }
+
   async function handleGuestLogin() {
     await router.push('/home');
   }

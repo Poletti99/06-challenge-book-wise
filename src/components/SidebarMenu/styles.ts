@@ -77,3 +77,11 @@ export const MenuLoginButton = styled(BaseItem, {
     color: '$green100',
   },
 });
+
+export const SignOutButton = styled(BaseItem, {
+  color: '$gray200',
+
+  '& > svg': {
+    color: '#F75A68',
+  },
+});
