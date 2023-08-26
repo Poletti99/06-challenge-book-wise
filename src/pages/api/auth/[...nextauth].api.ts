@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@/src/lib/auth/prisma-adapter';
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
+import GitHubProvider from 'next-auth/providers/github';
 
 export function buildNextAuthOptions(): NextAuthOptions {
   return {
@@ -28,6 +29,10 @@ export function buildNextAuthOptions(): NextAuthOptions {
             avatar_url: profile.picture,
           };
         },
+      }),
+      GitHubProvider({
+        clientId: process.env.GITHUB_CLIENT_ID ?? '',
+        clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
       }),
     ],
     callbacks: {

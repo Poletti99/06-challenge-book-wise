@@ -32,8 +32,16 @@ const Login: NextPageWithLayout = function () {
     }
   }, [session]);
 
+  async function login(provider: 'google' | 'github') {
+    await signIn(provider, { callbackUrl: '/home' });
+  }
+
   async function handleLoginWithGoogle() {
-    await signIn('google', { callbackUrl: '/home' });
+    await login('google');
+  }
+
+  async function handleLoginWithGithub() {
+    await login('github');
   }
 
   async function handleGuestLogin() {
@@ -61,7 +69,7 @@ const Login: NextPageWithLayout = function () {
               <Image src={LogoGoogle} alt="" width={32} height={32} />
               Entrar com Google
             </LoginButton>
-            <LoginButton>
+            <LoginButton onClick={handleLoginWithGithub}>
               <Image src={LogoGithub} alt="" width={32} height={32} />
               Entrar com Github
             </LoginButton>
