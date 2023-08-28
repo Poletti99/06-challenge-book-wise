@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import { UserImageContainer } from './styles';
-import Hero from '@/src/assets/hero.png';
 
-export function UserImage() {
+interface UserImageProps {
+  src: string;
+}
+export function UserImage({ src = '' }: UserImageProps) {
   return (
     <UserImageContainer>
-      <Image src={Hero} alt="" width={40} height={40} />
+      <Image src={src} alt="" width={40} height={40} />
     </UserImageContainer>
   );
 }

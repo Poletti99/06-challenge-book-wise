@@ -5,27 +5,32 @@ import Hero from '@/src/assets/hero.png';
 import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
 import { UserImage } from '@/src/components/UserImage';
+import { Rating } from '@/src/types';
 
-export function Comment() {
+interface CommentProps {
+  user: {
+    name: string;
+    avatar_url: string;
+  };
+  createdAt: string;
+  rate: number;
+  comment: string;
+}
+export function Comment({ comment, createdAt, rate, user }: CommentProps) {
   return (
     <CommentContainer>
       <CommentHeader>
         <div>
-          <UserImage />
+          <UserImage src={user.avatar_url} />
 
           <div>
-            <Heading>Victor Poletti</Heading>
-            <Text>Há 2 dias</Text>
+            <Heading>{user.name}</Heading>
+            <Text>{createdAt}</Text>
           </div>
         </div>
-        <StarsRating />
+        <StarsRating ratings={[{ id: '', rate }]} />
       </CommentHeader>
-      <CommentText>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur,
-        deleniti possimus? Quasi iure ad ea enim incidunt, modi perspiciatis eum
-        delectus dolorum pariatur autem! Esse magnam perferendis repellat
-        tenetur delectus.
-      </CommentText>
+      <CommentText>{comment}</CommentText>
     </CommentContainer>
   );
 }
