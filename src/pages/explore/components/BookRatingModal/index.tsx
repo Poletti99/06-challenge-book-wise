@@ -1,22 +1,25 @@
+import { BookDetails } from '@/src/components/BookDetails';
+import { Heading } from '@/src/components/Heading';
+import { Text } from '@/src/components/Text';
+import { UserImage } from '@/src/components/UserImage';
+import { api } from '@/src/lib/axios';
+import { StarsRating } from '@/src/pages/home/components/StarsRating';
 import * as Dialog from '@radix-ui/react-dialog';
+import { BookOpen, BookmarkSimple, Check, X } from 'phosphor-react';
+import { useEffect, useState } from 'react';
+import { Comment } from '../Comment';
 import {
   About,
   AboutItem,
   BookInfos,
   CloseButton,
+  CommentArea,
   CommentList,
   Content,
+  NewComment,
   Overlay,
   RatingSection,
 } from './styles';
-import { BookOpen, BookmarkSimple, X } from 'phosphor-react';
-import { Box } from '@/src/components/Box';
-import { BookDetails } from '@/src/components/BookDetails';
-import { Text } from '@/src/components/Text';
-import { Heading } from '@/src/components/Heading';
-import { Comment } from '../Comment';
-import { useEffect, useState } from 'react';
-import { api } from '@/src/lib/axios';
 
 interface BookRatginModalProps {
   bookId: string;
@@ -64,7 +67,6 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
   }, [bookId, isOpen]);
 
   function getCategoriesText(bookCategory: Categories) {
-    console.log(bookCategory);
     return bookCategory.map(({ category }) => category.name).join(', ');
   }
 
@@ -114,6 +116,25 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
             <Text>Avaliações</Text> <button>Avaliar</button>
           </div>
           <CommentList>
+            <NewComment as="form">
+              <header>
+                <div>
+                  <UserImage src="" />
+                  <span>Victor Poletti</span>
+                </div>
+                <StarsRating ratings={[]} />
+              </header>
+              <CommentArea />
+
+              <div>
+                <button>
+                  <X />
+                </button>
+                <button>
+                  <Check color="" />
+                </button>
+              </div>
+            </NewComment>
             {book.ratings.map((rating) => (
               <Comment
                 key={rating.id}

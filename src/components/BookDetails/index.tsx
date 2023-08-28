@@ -33,7 +33,7 @@ export function BookDetails({
     <BookDetailsContainer size={size}>
       <BookImage
         src={coverURL?.replace('public', '')}
-        alt=""
+        alt={name}
         height={94}
         width={64}
         size={size}
