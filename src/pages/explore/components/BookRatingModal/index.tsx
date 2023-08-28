@@ -77,11 +77,10 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
   return (
     <Dialog.Portal>
       <Overlay />
-
-      <CloseButton>
-        <X size={24} />
-      </CloseButton>
       <Content>
+        <CloseButton>
+          <X size={24} />
+        </CloseButton>
         <BookInfos>
           <BookDetails
             size="xl"

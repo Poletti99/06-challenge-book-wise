@@ -22,9 +22,10 @@ export function Book({ name, author, coverURL, ratings, id }: BookProps) {
             coverURL={coverURL}
             ratings={ratings}
           />
-          <BookRatingModal bookId={id} isOpen={openModal} />
         </Box>
       </Dialog.Trigger>
+
+      <BookRatingModal bookId={id} isOpen={openModal} />
     </Dialog.Root>
   );
 }
