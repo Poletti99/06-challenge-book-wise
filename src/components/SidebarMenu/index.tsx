@@ -60,7 +60,7 @@ export function SidebarMenu() {
       <footer>
         {userLoggedIn ? (
           <SignOutButton href="#" onClick={handleSignOut}>
-            <UserImage />
+            <UserImage src={userLoggedIn.avatar_url} />
             <span>{userLoggedIn?.name}</span>
             <SignOut />
           </SignOutButton>

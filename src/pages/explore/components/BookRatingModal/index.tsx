@@ -5,6 +5,7 @@ import { UserImage } from '@/src/components/UserImage';
 import { api } from '@/src/lib/axios';
 import { StarsRating } from '@/src/pages/home/components/StarsRating';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useSession } from 'next-auth/react';
 import { BookOpen, BookmarkSimple, Check, X } from 'phosphor-react';
 import { useEffect, useState } from 'react';
 import { Comment } from '../Comment';
@@ -20,6 +21,9 @@ import {
   Overlay,
   RatingSection,
 } from './styles';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface BookRatginModalProps {
   bookId: string;
@@ -52,8 +56,31 @@ type Book = {
   categories: Categories;
 };
 
+const newCommentFormSchema = z.object({
+  comment: z.string().min(10, 'Você pode escrever mais, confio em ti').max(450),
+  rate: z.number().min(0).max(5).step(0.5),
+});
+
+type NewCommentFormData = z.infer<typeof newCommentFormSchema>;
+
 export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
   const [book, setBook] = useState<Book | null>(null);
+  const [showNewComment, setShowNewComment] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<NewCommentFormData>({
+    resolver: zodResolver(newCommentFormSchema),
+    defaultValues: {
+      comment: '',
+      rate: 0,
+    },
+  });
+
+  const { data } = useSession();
+  const user = data?.user;
 
   useEffect(() => {
     async function getBook() {
@@ -68,6 +95,16 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
 
   function getCategoriesText(bookCategory: Categories) {
     return bookCategory.map(({ category }) => category.name).join(', ');
+  }
+
+  function handleShowNewComment(show: boolean) {
+    return () => {
+      setShowNewComment(show);
+    };
+  }
+
+  function handleInsertNewComment(data: NewCommentFormData) {
+    console.log(data);
   }
 
   if (!book) {
@@ -112,28 +149,38 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
 
         <RatingSection>
           <div>
-            <Text>Avaliações</Text> <button>Avaliar</button>
+            <Text>Avaliações</Text>
+            <button onClick={handleShowNewComment(true)}>Avaliar</button>
           </div>
           <CommentList>
-            <NewComment as="form">
-              <header>
-                <div>
-                  <UserImage src="" />
-                  <span>Victor Poletti</span>
-                </div>
-                <StarsRating ratings={[]} />
-              </header>
-              <CommentArea />
+            {showNewComment && (
+              <NewComment
+                as="form"
+                onSubmit={handleSubmit(handleInsertNewComment)}
+              >
+                <header>
+                  <div>
+                    <UserImage src={user?.avatar_url || ''} />
+                    <span>{user?.name}</span>
+                  </div>
+                  <StarsRating ratings={[]} />
+                </header>
+                <CommentArea
+                  placeholder="Escreva sua avaliação"
+                  {...register('comment')}
+                />
+                {errors.comment?.message}
 
-              <div>
-                <button>
-                  <X />
-                </button>
-                <button>
-                  <Check color="" />
-                </button>
-              </div>
-            </NewComment>
+                <div>
+                  <button onClick={handleShowNewComment(false)}>
+                    <X />
+                  </button>
+                  <button type="submit">
+                    <Check />
+                  </button>
+                </div>
+              </NewComment>
+            )}
             {book.ratings.map((rating) => (
               <Comment
                 key={rating.id}

@@ -97,6 +97,10 @@ export const CommentArea = styled('textarea', {
   height: '100%',
   border: '1px solid $gray500',
   resize: 'none',
+  color: '$gray200',
+  '&::placeholder': {
+    color: '$gray400',
+  },
 });
 
 export const NewComment = styled(Box, {
