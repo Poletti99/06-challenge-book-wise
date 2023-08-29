@@ -3,11 +3,12 @@ import { PageContainer } from '@/src/components/PageContainer';
 import { api } from '@/src/lib/axios';
 import { useState } from 'react';
 import { Book } from './components/Book';
-import { ExploreBookList, ExploreContainer } from './styles';
+import { CategoriesList, ExploreBookList, ExploreContainer } from './styles';
 import { BookT } from './types';
 import { GetStaticProps } from 'next';
 import { PageTitle } from '@/src/components/PageTitle';
 import { Binoculars } from 'phosphor-react';
+import { Tag } from '@/src/components/Tag';
 
 interface GETBooksAxiosResponse {
   books: BookT[];
@@ -26,7 +27,12 @@ export default function Explore({ books, cursorId }: ExploreProps) {
           <Binoculars />
           Explorar
         </PageTitle>
-
+        <CategoriesList>
+          <Tag selected>Tudo</Tag>
+          <Tag selected={false}>Tudo</Tag>
+          <Tag selected={false}>Tudo</Tag>
+          <Tag selected={false}>Tudo</Tag>
+        </CategoriesList>
         <ExploreBookList>
           {booksToExplore.map(({ name, author, cover_url, id, ratings }) => (
             <Book
