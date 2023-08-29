@@ -12,6 +12,8 @@ import { Book, Rating } from '@/src/types';
 import { GetStaticProps } from 'next';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
+import { PageTitle } from '@/src/components/PageTitle';
+import { ChartLineUp } from 'phosphor-react';
 
 type ActiveTab = 'home' | 'explore' | 'profile';
 
@@ -27,7 +29,10 @@ export default function Home({ ratings, popularBooks }: HomeProps) {
   return (
     <PageContainer>
       <FeedContainer>
-        <h2>Início</h2>
+        <PageTitle>
+          <ChartLineUp />
+          Início
+        </PageTitle>
         <BookReviewList>
           {ratings.map(({ user, book, ...rating }) => (
             <BookReview

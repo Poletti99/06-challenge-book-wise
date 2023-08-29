@@ -6,6 +6,8 @@ import { Book } from './components/Book';
 import { ExploreBookList, ExploreContainer } from './styles';
 import { BookT } from './types';
 import { GetStaticProps } from 'next';
+import { PageTitle } from '@/src/components/PageTitle';
+import { Binoculars } from 'phosphor-react';
 
 interface GETBooksAxiosResponse {
   books: BookT[];
@@ -20,7 +22,10 @@ export default function Explore({ books, cursorId }: ExploreProps) {
   return (
     <PageContainer>
       <ExploreContainer>
-        <Heading>Explorar</Heading>
+        <PageTitle>
+          <Binoculars />
+          Explorar
+        </PageTitle>
 
         <ExploreBookList>
           {booksToExplore.map(({ name, author, cover_url, id, ratings }) => (

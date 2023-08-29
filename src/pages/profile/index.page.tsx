@@ -18,6 +18,7 @@ import {
   Bookmark,
   BookmarkSimple,
   Books,
+  User,
   UserList,
 } from 'phosphor-react';
 import {
@@ -31,6 +32,7 @@ import { api } from '@/src/lib/axios';
 import { prisma } from '@/src/lib/prisma';
 import { buildNextAuthOptions } from '../api/auth/[...nextauth].api';
 import { getServerSession } from 'next-auth/next';
+import { PageTitle } from '@/src/components/PageTitle';
 
 type UserAnalytics = {
   totalReadedPages: number;
@@ -53,6 +55,10 @@ export default function Profile({
   return (
     <PageContainer>
       <ReadedBookList>
+        <PageTitle>
+          <User />
+          Perfil
+        </PageTitle>
         {ratings.map(({ book, ...rating }) => (
           <ReadedBook
             key={rating.id}
