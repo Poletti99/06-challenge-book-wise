@@ -9,17 +9,24 @@ import { GetStaticProps } from 'next';
 import { PageTitle } from '@/src/components/PageTitle';
 import { Binoculars } from 'phosphor-react';
 import { Tag } from '@/src/components/Tag';
+import { prisma } from '@/src/lib/prisma';
+
+type Category = {
+  name: string;
+  id: string;
+};
 
 interface GETBooksAxiosResponse {
   books: BookT[];
   cursorId: string;
+  categories: Category[];
 }
 
 interface ExploreProps extends GETBooksAxiosResponse {}
-export default function Explore({ books, cursorId }: ExploreProps) {
+export default function Explore({ books, cursorId, categories }: ExploreProps) {
   const [booksToExplore, setBooksToExplore] = useState<BookT[]>(books);
   const [currentCursorId, setCurrentCursorId] = useState(cursorId);
-
+  console.log({ categories });
   return (
     <PageContainer>
       <ExploreContainer>
@@ -29,9 +36,9 @@ export default function Explore({ books, cursorId }: ExploreProps) {
         </PageTitle>
         <CategoriesList>
           <Tag selected>Tudo</Tag>
-          <Tag selected={false}>Tudo</Tag>
-          <Tag selected={false}>Tudo</Tag>
-          <Tag selected={false}>Tudo</Tag>
+          {categories.map((category) => (
+            <Tag selected={false}>{category.name}</Tag>
+          ))}
         </CategoriesList>
         <ExploreBookList>
           {booksToExplore.map(({ name, author, cover_url, id, ratings }) => (
@@ -55,10 +62,17 @@ export const getStaticProps: GetStaticProps = async () => {
     data: { books, cursorId },
   } = await api.get<GETBooksAxiosResponse>('/books');
 
+  const categories = await prisma.category.findMany({
+    orderBy: {
+      name: 'asc',
+    },
+  });
+
   return {
     props: {
       books,
       cursorId,
+      categories,
     },
   };
 };
