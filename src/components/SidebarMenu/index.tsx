@@ -1,20 +1,16 @@
 import Logo from '@/src/assets/logo-small.svg';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Binoculars, ChartLineUp, SignIn, SignOut, User } from 'phosphor-react';
+import { useEffect, useState } from 'react';
+import { UserImage } from '../UserImage';
 import {
   MenuItem,
   MenuLoginButton,
   SidebarMenuContainer,
   SignOutButton,
 } from './styles';
-import { useSession, signOut } from 'next-auth/react';
-import {
-  MouseEventHandler,
-  ReactEventHandler,
-  useEffect,
-  useState,
-} from 'react';
-import { UserImage } from '../UserImage';
+import { useRouter } from 'next/router';
 
 type User = {
   id: string;
@@ -22,9 +18,12 @@ type User = {
   email: string;
   avatar_url: string;
 };
+
+type Tab = 'home' | 'explore' | 'profile';
 export function SidebarMenu() {
   const [userLoggedIn, setUserLoggedIn] = useState<User | null>(null);
-
+  const router = useRouter();
+  const pathname = router.pathname.replace('/', '');
   const session = useSession();
 
   useEffect(() => {
@@ -32,6 +31,10 @@ export function SidebarMenu() {
       setUserLoggedIn(session.data.user);
     }
   }, [session.status]);
+
+  function isTabActive(tab: Tab) {
+    return tab === pathname;
+  }
 
   async function handleSignOut() {
     await signOut({ callbackUrl: '/' });
@@ -42,15 +45,15 @@ export function SidebarMenu() {
       <div>
         <Image src={Logo} alt="" />
         <nav>
-          <MenuItem href="/home" active>
+          <MenuItem href="/home" active={isTabActive('home')}>
             <ChartLineUp /> Início
           </MenuItem>
 
-          <MenuItem href="/explore" active={false}>
+          <MenuItem href="/explore" active={isTabActive('explore')}>
             <Binoculars /> Explorar
           </MenuItem>
           {userLoggedIn && (
-            <MenuItem href="/profile" active={false}>
+            <MenuItem href="/profile" active={isTabActive('profile')}>
               <User /> Perfil
             </MenuItem>
           )}
