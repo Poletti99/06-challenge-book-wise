@@ -30,6 +30,17 @@ interface BookRatginModalProps {
   isOpen: boolean;
 }
 
+type Rating = {
+  created_at: string;
+  description: string;
+  id: string;
+  rate: number;
+  user: {
+    avatar_url: string;
+    name: string;
+  };
+};
+
 type Categories = {
   category: {
     id: string;
@@ -43,16 +54,7 @@ type Book = {
   name: string;
   total_pages: number;
   cover_url: string;
-  ratings: {
-    created_at: string;
-    description: string;
-    id: string;
-    rate: number;
-    user: {
-      avatar_url: string;
-      name: string;
-    };
-  }[];
+  ratings: Rating[];
   categories: Categories;
 };
 
@@ -66,6 +68,7 @@ type NewCommentFormData = z.infer<typeof newCommentFormSchema>;
 export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
   const [book, setBook] = useState<Book | null>(null);
   const [showNewComment, setShowNewComment] = useState(false);
+  const [ratings, setRatings] = useState<Rating[]>([]);
 
   const {
     register,
@@ -84,8 +87,10 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
 
   useEffect(() => {
     async function getBook() {
-      const { data } = await api.get(`/books/${bookId}`);
+      const { data } = await api.get<{ book: Book }>(`/books/${bookId}`);
+
       setBook(data.book);
+      setRatings(data.book.ratings);
     }
 
     if (isOpen) {
@@ -94,7 +99,7 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
   }, [bookId, isOpen]);
 
   function getCategoriesText(bookCategory: Categories) {
-    return bookCategory.map(({ category }) => category.name).join(', ');
+    return bookCategory?.map(({ category }) => category.name).join(', ');
   }
 
   function handleShowNewComment(show: boolean) {
@@ -103,8 +108,16 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
     };
   }
 
-  function handleInsertNewComment(data: NewCommentFormData) {
-    console.log(data);
+  async function handleInsertNewComment(data: NewCommentFormData) {
+    const ratingObject = await api.post<{ rating: Rating }>('/ratings/create', {
+      rating: data.comment,
+      rate: data.rate,
+      bookId: book?.id,
+      userId: user?.id,
+    });
+
+    setRatings((state) => [ratingObject.data.rating, ...state]);
+    setShowNewComment(false);
   }
 
   if (!book) {
@@ -181,7 +194,7 @@ export function BookRatingModal({ bookId, isOpen }: BookRatginModalProps) {
                 </div>
               </NewComment>
             )}
-            {book.ratings.map((rating) => (
+            {ratings.map((rating) => (
               <Comment
                 key={rating.id}
                 user={rating.user}

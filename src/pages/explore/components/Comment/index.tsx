@@ -21,7 +21,7 @@ export function Comment({ comment, createdAt, rate, user }: CommentProps) {
     <CommentContainer>
       <CommentHeader>
         <div>
-          <UserImage src={user.avatar_url} />
+          <UserImage src={user?.avatar_url || ''} />
 
           <div>
             <Heading>{user.name}</Heading>

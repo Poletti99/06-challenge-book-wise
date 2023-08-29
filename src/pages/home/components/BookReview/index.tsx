@@ -39,7 +39,7 @@ export function BookReview({ user, book, rating }: BookReviewProps) {
         <UserInfo>
           <UserImageContainer>
             <Image
-              src={user.avatar_url}
+              src={user?.avatar_url || ''}
               alt={user.name}
               width={40}
               height={40}
