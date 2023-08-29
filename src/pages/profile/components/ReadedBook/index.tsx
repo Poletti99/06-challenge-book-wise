@@ -1,15 +1,15 @@
+import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
+import { StarsRating } from '@/src/pages/home/components/StarsRating';
+import { PopularBooks } from '@/src/pages/home/index.page';
+import { formatDate } from '@/src/utils/date-formatter';
+import Image from 'next/image';
 import {
   ReadedBookContainer,
   ReadedBookContent,
   ReadedBookDetails,
   ReadedBookInfos,
 } from './styles';
-import Image from 'next/image';
-import Logo from '@/src/assets/hero.png';
-import { Heading } from '@/src/components/Heading';
-import { StarsRating } from '@/src/pages/home/components/StarsRating';
-import { PopularBooks } from '@/src/pages/home/index.page';
 
 interface ReadedBookProps extends Omit<PopularBooks, 'id'> {
   createdAt: string;
@@ -26,7 +26,7 @@ export function ReadedBook({
 }: ReadedBookProps) {
   return (
     <ReadedBookContainer>
-      <Text>{createdAt}</Text>
+      <Text>{formatDate(createdAt)}</Text>
       <ReadedBookContent>
         <ReadedBookDetails>
           <Image

@@ -1,11 +1,9 @@
-import { StarsRating } from '@/src/pages/home/components/StarsRating';
-import { CommentContainer, CommentHeader, CommentText } from './styles';
-import Image from 'next/image';
-import Hero from '@/src/assets/hero.png';
 import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
 import { UserImage } from '@/src/components/UserImage';
-import { Rating } from '@/src/types';
+import { StarsRating } from '@/src/pages/home/components/StarsRating';
+import { formatDate } from '@/src/utils/date-formatter';
+import { CommentContainer, CommentHeader, CommentText } from './styles';
 
 interface CommentProps {
   user: {
@@ -25,7 +23,7 @@ export function Comment({ comment, createdAt, rate, user }: CommentProps) {
 
           <div>
             <Heading>{user.name}</Heading>
-            <Text>{createdAt}</Text>
+            <Text>{formatDate(createdAt)}</Text>
           </div>
         </div>
         <StarsRating ratings={[{ id: '', rate }]} />

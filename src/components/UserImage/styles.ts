@@ -10,9 +10,25 @@ export const UserImageContainer = styled('div', {
   justifyContent: 'center',
   width: 'fit-content',
 
-  '& > img': {
-    borderRadius: '$full',
-    width: '$10',
-    height: '$10',
+  variants: {
+    size: {
+      sm: {
+        '& > img': {
+          borderRadius: '$full',
+          width: '$10',
+          height: '$10',
+        },
+      },
+      lg: {
+        '& > img': {
+          borderRadius: '$full',
+          width: '4.5rem',
+          height: '4.5rem',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
   },
 });

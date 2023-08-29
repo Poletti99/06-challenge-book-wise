@@ -1,4 +1,22 @@
+import Logo from '@/src/assets/hero.png';
+import { Heading } from '@/src/components/Heading';
 import { PageContainer } from '@/src/components/PageContainer';
+import { PageTitle } from '@/src/components/PageTitle';
+import { Text } from '@/src/components/Text';
+import { api } from '@/src/lib/axios';
+import { prisma } from '@/src/lib/prisma';
+import { Rating } from '@/src/types';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth/next';
+import Image from 'next/image';
+import {
+  BookOpen,
+  BookmarkSimple,
+  Books,
+  User,
+  UserList,
+} from 'phosphor-react';
+import { buildNextAuthOptions } from '../api/auth/[...nextauth].api';
 import { ReadedBook } from './components/ReadedBook';
 import {
   AnalyticsItem,
@@ -8,31 +26,7 @@ import {
   UserImageContainer,
   UserInfos,
 } from './styles';
-import Image from 'next/image';
-import Logo from '@/src/assets/hero.png';
-import { Heading } from '@/src/components/Heading';
-import { Text } from '@/src/components/Text';
-import {
-  Book,
-  BookOpen,
-  Bookmark,
-  BookmarkSimple,
-  Books,
-  User,
-  UserList,
-} from 'phosphor-react';
-import {
-  GetServerSideProps,
-  GetStaticProps,
-  NextApiRequest,
-  NextApiResponse,
-} from 'next';
-import { Rating } from '@/src/types';
-import { api } from '@/src/lib/axios';
-import { prisma } from '@/src/lib/prisma';
-import { buildNextAuthOptions } from '../api/auth/[...nextauth].api';
-import { getServerSession } from 'next-auth/next';
-import { PageTitle } from '@/src/components/PageTitle';
+import { UserImage } from '@/src/components/UserImage';
 
 type UserAnalytics = {
   totalReadedPages: number;
@@ -43,7 +37,7 @@ type UserAnalytics = {
 
 interface ProfileProps {
   ratings: Rating[];
-  user: { name: string; id: string; created_at: string };
+  user: { name: string; id: string; created_at: string; avatar_url: string };
   userAnalytics: UserAnalytics;
 }
 
@@ -74,12 +68,12 @@ export default function Profile({
       <ProfileDetails>
         <UserInfos>
           <UserImageContainer>
-            <Image src={Logo} width={72} height={72} alt="" />
+            <UserImage size="lg" src={user?.avatar_url || ''} />
           </UserImageContainer>
           <Heading size="xl">{user.name}</Heading>
           <Text as="span">
             membro desde
-            {user.created_at}
+            {` ${new Date(user.created_at).getFullYear()}`}
           </Text>
         </UserInfos>
         <hr />

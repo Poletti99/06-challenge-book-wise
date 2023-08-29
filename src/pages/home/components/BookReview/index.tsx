@@ -11,6 +11,7 @@ import {
 } from './styles';
 import { Heading } from '@/src/components/Heading';
 import { Text } from '@/src/components/Text';
+import { formatDate } from '@/src/utils/date-formatter';
 
 interface BookReviewProps {
   user: {
@@ -47,7 +48,7 @@ export function BookReview({ user, book, rating }: BookReviewProps) {
           </UserImageContainer>
           <div>
             <p>{user.name}</p>
-            <Text as="span">{rating.created_at}</Text>
+            <Text as="span">{formatDate(rating.created_at)}</Text>
           </div>
         </UserInfo>
 
