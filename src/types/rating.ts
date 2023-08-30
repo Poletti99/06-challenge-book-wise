@@ -6,6 +6,7 @@ export type Rating = {
   description: string;
   created_at: string;
   book: Book;
+  book_id: string;
   user: {
     name: string;
     id: string;

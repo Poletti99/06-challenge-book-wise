@@ -1,14 +1,12 @@
-import Logo from '@/src/assets/hero.png';
 import { Heading } from '@/src/components/Heading';
 import { PageContainer } from '@/src/components/PageContainer';
 import { PageTitle } from '@/src/components/PageTitle';
 import { Text } from '@/src/components/Text';
-import { api } from '@/src/lib/axios';
+import { UserImage } from '@/src/components/UserImage';
 import { prisma } from '@/src/lib/prisma';
 import { Rating } from '@/src/types';
 import { GetServerSideProps } from 'next';
 import { getServerSession } from 'next-auth/next';
-import Image from 'next/image';
 import {
   BookOpen,
   BookmarkSimple,
@@ -16,7 +14,9 @@ import {
   User,
   UserList,
 } from 'phosphor-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { buildNextAuthOptions } from '../api/auth/[...nextauth].api';
+import { getRatings } from '../requests/ratings';
 import { ReadedBook } from './components/ReadedBook';
 import {
   AnalyticsItem,
@@ -26,7 +26,6 @@ import {
   UserImageContainer,
   UserInfos,
 } from './styles';
-import { UserImage } from '@/src/components/UserImage';
 
 type UserAnalytics = {
   totalReadedPages: number;
@@ -39,13 +38,63 @@ interface ProfileProps {
   ratings: Rating[];
   user: { name: string; id: string; created_at: string; avatar_url: string };
   userAnalytics: UserAnalytics;
+  cursorId: string;
 }
 
+let observer: IntersectionObserver;
 export default function Profile({
   ratings,
   user,
   userAnalytics,
+  cursorId,
 }: ProfileProps) {
+  const [ratingsList, setRatingsList] = useState(ratings);
+  const [currentCursorId, setCurrentCursorId] = useState(cursorId);
+  const [usedCursorIds, setUsedCursorIds] = useState<string[]>([]);
+
+  const ref = useRef<HTMLInputElement>(null);
+
+  const isCursorIdUsed = useCallback(
+    (cursorId: string) => {
+      return usedCursorIds.includes(cursorId);
+    },
+    [usedCursorIds],
+  );
+
+  async function getMoreRatings(currentCursorId: string) {
+    setUsedCursorIds((state) => [...state, currentCursorId]);
+    const { ratings, cursorId } = await getRatings(currentCursorId, user.id);
+    setRatingsList((state) => [...state, ...ratings]);
+    setCurrentCursorId(cursorId);
+  }
+
+  useEffect(() => {
+    observer?.disconnect();
+    observer = new IntersectionObserver(
+      (entities) => {
+        const target = entities[0];
+        if (target.isIntersecting && !isCursorIdUsed(currentCursorId)) {
+          getMoreRatings(currentCursorId);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5,
+      },
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [ref, currentCursorId, isCursorIdUsed]);
+
   return (
     <PageContainer>
       <ReadedBookList>
@@ -53,7 +102,7 @@ export default function Profile({
           <User />
           Perfil
         </PageTitle>
-        {ratings.map(({ book, ...rating }) => (
+        {ratingsList.map(({ book, ...rating }, index, list) => (
           <ReadedBook
             key={rating.id}
             author={book.author}
@@ -62,6 +111,7 @@ export default function Profile({
             createdAt={rating.created_at}
             ratingDescription={rating.description}
             ratings={[{ id: rating.id, rate: rating.rate }]}
+            ref={index + 1 === list.length ? ref : null}
           />
         ))}
       </ReadedBookList>
@@ -123,24 +173,6 @@ type RatingBook = {
     category: { name: string };
   }[];
 };
-interface RatingsData {
-  ratings: {
-    id: string;
-    rate: number;
-    description: string;
-    created_at: string;
-    book_id: string;
-    user_id: string;
-    book: RatingBook;
-
-    user: {
-      name: string;
-      avatar_url: string;
-      id: string;
-      created_at: string;
-    };
-  }[];
-}
 
 interface ReadedBook {
   [id: string]: RatingBook;
@@ -159,13 +191,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       },
     };
   }
-  const { data } = await api.get<RatingsData>('/ratings', {
-    params: {
-      userId,
-    },
-  });
-
-  const { ratings } = data;
+  const { ratings, cursorId } = await getRatings('', userId);
 
   const user = await prisma.user
     .findUnique({
@@ -225,6 +251,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       ratings: ratings,
       user,
       userAnalytics,
+      cursorId,
     },
   };
 };
