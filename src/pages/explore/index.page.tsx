@@ -23,10 +23,12 @@ interface ExploreProps extends GETBooksAxiosResponse {
 }
 
 let observer: IntersectionObserver;
+let firstLoading = true;
 export default function Explore({ books, cursorId, categories }: ExploreProps) {
   const [booksToExplore, setBooksToExplore] = useState<BookT[]>(books);
   const [currentCursorId, setCurrentCursorId] = useState(cursorId);
   const [usedCursorIds, setUsedCursorIds] = useState<string[]>([]);
+  const [currentCategory, setCurrentCategory] = useState('all');
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -37,9 +39,13 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
     [usedCursorIds],
   );
 
-  async function getMoreRatings(currentCursorId: string) {
+  async function getMoreRatings(currentCursorId: string, category = '') {
     setUsedCursorIds((state) => [...state, currentCursorId]);
-    const { books, cursorId } = await getBooks(currentCursorId);
+    const currentCategory = category === 'all' ? '' : category;
+    const { books, cursorId } = await getBooks(
+      currentCursorId,
+      currentCategory,
+    );
     setBooksToExplore((state) => [...state, ...books]);
     setCurrentCursorId(cursorId);
   }
@@ -49,8 +55,12 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
     observer = new IntersectionObserver(
       (entities) => {
         const target = entities[0];
-        if (target.isIntersecting && !isCursorIdUsed(currentCursorId)) {
-          getMoreRatings(currentCursorId);
+        if (
+          target.isIntersecting &&
+          !isCursorIdUsed(currentCursorId) &&
+          booksToExplore.length % 15 == 0
+        ) {
+          getMoreRatings(currentCursorId, currentCategory);
         }
       },
       {
@@ -69,7 +79,17 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
         observer.unobserve(ref.current);
       }
     };
-  }, [ref, currentCursorId, isCursorIdUsed]);
+  }, [ref, currentCursorId, isCursorIdUsed, currentCategory, booksToExplore]);
+
+  function handleChangeCurrentCategory(category: string) {
+    return () => {
+      setCurrentCategory(category);
+      setCurrentCursorId('');
+      setUsedCursorIds([]);
+      setBooksToExplore([]);
+      getMoreRatings('', category);
+    };
+  }
 
   return (
     <PageContainer>
@@ -79,9 +99,18 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
           Explorar
         </PageTitle>
         <CategoriesList>
-          <Tag selected>Tudo</Tag>
+          <Tag
+            selected={currentCategory === 'all'}
+            onClick={handleChangeCurrentCategory('all')}
+          >
+            Tudo
+          </Tag>
           {categories.map((category) => (
-            <Tag key={category.id} selected={false}>
+            <Tag
+              key={category.id}
+              selected={currentCategory === category.name}
+              onClick={handleChangeCurrentCategory(category.name)}
+            >
               {category.name}
             </Tag>
           ))}
@@ -107,7 +136,7 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { books, cursorId } = await getBooks('');
+  const { books, cursorId } = await getBooks();
 
   const categories = await prisma.category.findMany({
     orderBy: {

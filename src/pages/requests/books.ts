@@ -7,13 +7,17 @@ export interface GETBooksAxiosResponse {
 }
 
 export async function getBooks(
-  currentCursorId: string,
+  currentCursorId = '',
+  category = '',
 ): Promise<GETBooksAxiosResponse> {
   const {
     data: { books, cursorId },
-  } = await api.get<GETBooksAxiosResponse>(
-    `/books?cursorId=${currentCursorId}`,
-  );
+  } = await api.get<GETBooksAxiosResponse>('/books', {
+    params: {
+      cursorId: currentCursorId,
+      category,
+    },
+  });
 
   return {
     books,

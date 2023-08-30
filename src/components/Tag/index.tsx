@@ -1,11 +1,15 @@
-import { ReactNode } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 import { TagContainer } from './styles';
 
-interface TagProps {
+interface TagProps extends ComponentProps<typeof TagContainer> {
   children: ReactNode;
   selected: boolean;
 }
 
-export function Tag({ children, selected = false }: TagProps) {
-  return <TagContainer selected={selected}>{children}</TagContainer>;
+export function Tag({ children, selected = false, ...props }: TagProps) {
+  return (
+    <TagContainer selected={selected} {...props}>
+      {children}
+    </TagContainer>
+  );
 }

@@ -10,9 +10,19 @@ export default async function handler(
     return res.status(405).end();
   }
 
+  const bookCategory = String(req.query.category || '');
   const paginationCursorId = String(req.query.cursorId || '');
 
   const prismaOptions: Prisma.BookFindManyArgs = {
+    where: {
+      categories: {
+        some: {
+          category: {
+            name: bookCategory || undefined,
+          },
+        },
+      },
+    },
     take: PAGE_SIZE + 5,
     skip: paginationCursorId ? 1 : 0,
     cursor: {
