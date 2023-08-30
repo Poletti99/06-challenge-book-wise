@@ -27,7 +27,6 @@ const Login: NextPageWithLayout = function () {
   useEffect(() => {
     const isSignedIn = session.status === 'authenticated';
     if (isSignedIn) {
-      console.log('desgrama');
       router.push('/home');
     }
   }, [session]);

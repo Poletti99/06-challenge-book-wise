@@ -26,7 +26,7 @@ interface ExploreProps extends GETBooksAxiosResponse {}
 export default function Explore({ books, cursorId, categories }: ExploreProps) {
   const [booksToExplore, setBooksToExplore] = useState<BookT[]>(books);
   const [currentCursorId, setCurrentCursorId] = useState(cursorId);
-  console.log({ categories });
+
   return (
     <PageContainer>
       <ExploreContainer>

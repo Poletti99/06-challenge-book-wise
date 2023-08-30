@@ -3,6 +3,8 @@ import { styled } from '@/src/styles';
 export const FeedContainer = styled('main', {
   flex: 1,
   maxWidth: 1080,
+  display: 'flex',
+  flexDirection: 'column',
 });
 
 export const BookReviewList = styled('div', {

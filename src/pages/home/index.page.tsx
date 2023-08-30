@@ -6,16 +6,15 @@ import {
 } from './styles';
 
 import { PageContainer } from '@/src/components/PageContainer';
-import { api } from '@/src/lib/axios';
+import { PageTitle } from '@/src/components/PageTitle';
 import { prisma } from '@/src/lib/prisma';
 import { Book, Rating } from '@/src/types';
 import { GetStaticProps } from 'next';
+import { ChartLineUp } from 'phosphor-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getRatings } from '../requests/ratings';
 import { BookReview } from './components/BookReview';
 import { PopularBook } from './components/PopularBook';
-import { PageTitle } from '@/src/components/PageTitle';
-import { ChartLineUp } from 'phosphor-react';
-
-type ActiveTab = 'home' | 'explore' | 'profile';
 
 export interface PopularBooks extends Book {
   ratings: { id: string; rate: number }[];
@@ -23,9 +22,58 @@ export interface PopularBooks extends Book {
 interface HomeProps {
   ratings: Rating[];
   popularBooks: PopularBooks[];
+  cursorId: string;
 }
 
-export default function Home({ ratings, popularBooks }: HomeProps) {
+let observer: IntersectionObserver;
+export default function Home({ ratings, popularBooks, cursorId }: HomeProps) {
+  const [ratingsList, setRatingsList] = useState(ratings);
+  const [currentCursorId, setCurrentCursorId] = useState(cursorId);
+  const [usedCursorIds, setUsedCursorIds] = useState<string[]>([]);
+
+  const ref = useRef<HTMLInputElement>(null);
+
+  const isCursorIdUsed = useCallback(
+    (cursorId: string) => {
+      return usedCursorIds.includes(cursorId);
+    },
+    [usedCursorIds],
+  );
+
+  async function getMoreRatings(currentCursorId: string) {
+    setUsedCursorIds((state) => [...state, currentCursorId]);
+    const { ratings, cursorId } = await getRatings(currentCursorId);
+    setRatingsList((state) => [...state, ...ratings]);
+    setCurrentCursorId(cursorId);
+  }
+
+  useEffect(() => {
+    observer?.disconnect();
+    observer = new IntersectionObserver(
+      (entities) => {
+        const target = entities[0];
+        if (target.isIntersecting && !isCursorIdUsed(currentCursorId)) {
+          getMoreRatings(currentCursorId);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5,
+      },
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [ref, currentCursorId, isCursorIdUsed]);
+
   return (
     <PageContainer>
       <FeedContainer>
@@ -33,13 +81,15 @@ export default function Home({ ratings, popularBooks }: HomeProps) {
           <ChartLineUp />
           Início
         </PageTitle>
+
         <BookReviewList>
-          {ratings.map(({ user, book, ...rating }) => (
+          {ratingsList.map(({ user, book, ...rating }, index, list) => (
             <BookReview
               key={rating.id}
               user={user}
               book={book}
               rating={rating}
+              ref={index + 1 === list.length ? ref : null}
             />
           ))}
         </BookReviewList>
@@ -64,7 +114,7 @@ export default function Home({ ratings, popularBooks }: HomeProps) {
 }
 
 export const getStaticProps: GetStaticProps = async ({}) => {
-  const { data } = await api.get<{ ratings: Rating[] }>('/ratings');
+  const { ratings, cursorId } = await getRatings('');
 
   const popularBooks = await prisma.book.findMany({
     take: 4,
@@ -89,9 +139,10 @@ export const getStaticProps: GetStaticProps = async ({}) => {
 
   return {
     props: {
-      ratings: data.ratings,
+      ratings,
       popularBooks,
+      cursorId,
     },
-    revalidate: 60 * 60 * 24, //1 dia
+    revalidate: 60 * 60 * 1, //1 hora
   };
 };

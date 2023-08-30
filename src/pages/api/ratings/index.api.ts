@@ -1,7 +1,7 @@
 import { prisma } from '@/src/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PAGE_SIZE } from '../constants';
-import { Prisma } from '@prisma/client';
 
 export default async function handler(
   req: NextApiRequest,
@@ -76,5 +76,8 @@ export default async function handler(
     newPaginationCursorId = String(lastBookInList?.id);
   }
 
-  return res.json({ ratings, cursorId: newPaginationCursorId });
+  return res.json({
+    ratings,
+    cursorId: newPaginationCursorId || paginationCursorId,
+  });
 }
