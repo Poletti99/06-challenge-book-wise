@@ -1,31 +1,75 @@
 import { Heading } from '@/src/components/Heading';
 import { PageContainer } from '@/src/components/PageContainer';
 import { api } from '@/src/lib/axios';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Book } from './components/Book';
 import { CategoriesList, ExploreBookList, ExploreContainer } from './styles';
-import { BookT } from './types';
+
 import { GetStaticProps } from 'next';
 import { PageTitle } from '@/src/components/PageTitle';
 import { Binoculars } from 'phosphor-react';
 import { Tag } from '@/src/components/Tag';
 import { prisma } from '@/src/lib/prisma';
+import { GETBooksAxiosResponse, getBooks } from '../requests/books';
+import { Book as BookT } from '@/src/types';
 
 type Category = {
   name: string;
   id: string;
 };
 
-interface GETBooksAxiosResponse {
-  books: BookT[];
-  cursorId: string;
+interface ExploreProps extends GETBooksAxiosResponse {
   categories: Category[];
 }
 
-interface ExploreProps extends GETBooksAxiosResponse {}
+let observer: IntersectionObserver;
 export default function Explore({ books, cursorId, categories }: ExploreProps) {
   const [booksToExplore, setBooksToExplore] = useState<BookT[]>(books);
   const [currentCursorId, setCurrentCursorId] = useState(cursorId);
+  const [usedCursorIds, setUsedCursorIds] = useState<string[]>([]);
+
+  const ref = useRef<HTMLInputElement>(null);
+
+  const isCursorIdUsed = useCallback(
+    (cursorId: string) => {
+      return usedCursorIds.includes(cursorId);
+    },
+    [usedCursorIds],
+  );
+
+  async function getMoreRatings(currentCursorId: string) {
+    setUsedCursorIds((state) => [...state, currentCursorId]);
+    const { books, cursorId } = await getBooks(currentCursorId);
+    setBooksToExplore((state) => [...state, ...books]);
+    setCurrentCursorId(cursorId);
+  }
+
+  useEffect(() => {
+    observer?.disconnect();
+    observer = new IntersectionObserver(
+      (entities) => {
+        const target = entities[0];
+        if (target.isIntersecting && !isCursorIdUsed(currentCursorId)) {
+          getMoreRatings(currentCursorId);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5,
+      },
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [ref, currentCursorId, isCursorIdUsed]);
 
   return (
     <PageContainer>
@@ -37,20 +81,25 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
         <CategoriesList>
           <Tag selected>Tudo</Tag>
           {categories.map((category) => (
-            <Tag selected={false}>{category.name}</Tag>
+            <Tag key={category.id} selected={false}>
+              {category.name}
+            </Tag>
           ))}
         </CategoriesList>
         <ExploreBookList>
-          {booksToExplore.map(({ name, author, cover_url, id, ratings }) => (
-            <Book
-              key={id}
-              id={id}
-              name={name}
-              author={author}
-              coverURL={cover_url}
-              ratings={ratings}
-            />
-          ))}
+          {booksToExplore.map(
+            ({ name, author, cover_url, id, ratings }, index, list) => (
+              <Book
+                key={id}
+                id={id}
+                name={name}
+                author={author}
+                coverURL={cover_url}
+                ratings={ratings}
+                ref={index + 1 === list.length ? ref : null}
+              />
+            ),
+          )}
         </ExploreBookList>
       </ExploreContainer>
     </PageContainer>
@@ -58,9 +107,7 @@ export default function Explore({ books, cursorId, categories }: ExploreProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const {
-    data: { books, cursorId },
-  } = await api.get<GETBooksAxiosResponse>('/books');
+  const { books, cursorId } = await getBooks('');
 
   const categories = await prisma.category.findMany({
     orderBy: {

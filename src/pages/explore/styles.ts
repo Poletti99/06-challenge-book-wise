@@ -1,13 +1,22 @@
 import { styled } from '@/src/styles';
 
-export const ExploreContainer = styled('main', {});
+export const ExploreContainer = styled('main', {
+  display: 'flex',
+  flexDirection: 'column',
+});
 
 export const ExploreBookList = styled('div', {
   display: 'grid',
   gridTemplateColumns: '1fr 1fr 1fr',
   gap: '$5',
   maxWidth: 1080,
-  margin: '3rem 0',
+  marginTop: '3rem',
+  overflowY: 'scroll',
+
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
 });
 
 export const CategoriesList = styled('div', {

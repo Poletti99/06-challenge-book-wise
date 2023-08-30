@@ -13,7 +13,7 @@ export default async function handler(
   const paginationCursorId = String(req.query.cursorId || '');
 
   const prismaOptions: Prisma.BookFindManyArgs = {
-    take: PAGE_SIZE,
+    take: PAGE_SIZE + 5,
     skip: paginationCursorId ? 1 : 0,
     cursor: {
       id: paginationCursorId,
@@ -44,5 +44,8 @@ export default async function handler(
     newPaginationCursorId = String(lastBookInList?.id);
   }
 
-  return res.json({ books: bookList, cursorId: newPaginationCursorId });
+  return res.json({
+    books: bookList,
+    cursorId: newPaginationCursorId || paginationCursorId,
+  });
 }

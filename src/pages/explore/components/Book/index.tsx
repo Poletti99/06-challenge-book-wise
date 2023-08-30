@@ -2,30 +2,33 @@ import { BookDetails } from '@/src/components/BookDetails';
 import { Box } from '@/src/components/Box';
 import * as Dialog from '@radix-ui/react-dialog';
 import { BookRatingModal } from '../BookRatingModal';
-import { BookT } from '../../types';
-import { useState } from 'react';
+
+import { Book as BookT } from '@/src/types';
+import { forwardRef, useState } from 'react';
 
 interface BookProps extends Omit<BookT, 'cover_url'> {
   coverURL: string;
 }
 
-export function Book({ name, author, coverURL, ratings, id }: BookProps) {
-  const [openModal, setOpenModal] = useState(false);
+export const Book = forwardRef<HTMLDivElement | null, BookProps>(
+  ({ name, author, coverURL, ratings, id }, ref) => {
+    const [openModal, setOpenModal] = useState(false);
 
-  return (
-    <Dialog.Root open={openModal} onOpenChange={setOpenModal}>
-      <Dialog.Trigger asChild>
-        <Box>
-          <BookDetails
-            name={name}
-            author={author}
-            coverURL={coverURL}
-            ratings={ratings}
-          />
-        </Box>
-      </Dialog.Trigger>
+    return (
+      <Dialog.Root open={openModal} onOpenChange={setOpenModal}>
+        <Dialog.Trigger asChild>
+          <Box ref={ref}>
+            <BookDetails
+              name={name}
+              author={author}
+              coverURL={coverURL}
+              ratings={ratings}
+            />
+          </Box>
+        </Dialog.Trigger>
 
-      <BookRatingModal bookId={id} isOpen={openModal} />
-    </Dialog.Root>
-  );
-}
+        <BookRatingModal bookId={id} isOpen={openModal} />
+      </Dialog.Root>
+    );
+  },
+);
